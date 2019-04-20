@@ -26,6 +26,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
     int lives_left;
     int score;
     int rounds;
+    double ave;
     String current_char;
     String answer;
     boolean difficulty;
@@ -43,6 +44,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         score = 0;
         state = 0;
         rounds = 0;
+        ave = 0.0;
         updateView();
         CustomReader dict = new CustomReader(getApplicationContext());
         dictionary = dict.readLine("words.txt");
@@ -138,7 +140,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        saveScore(input.getText().toString(), score, curr_level, difficulty);
+                        saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
                         Game.super.onBackPressed();
                     }
                 });
@@ -170,7 +172,6 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         TextView curr_score = findViewById(R.id.score);
         curr_score.setText(String.valueOf(score));
         TextView perf = findViewById(R.id.performance);
-        double ave;
         if (rounds==0){
             ave = 0.00;
         }
@@ -179,7 +180,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         }
         perf.setText(String.format(Locale.getDefault(),"%.2f", ave));
     }
-    public void saveScore(String name, int score, int last_level, boolean difficulty){
+    public void saveScore(String name, int score, int last_level, boolean difficulty, double performance){
         try {
             File file;
             if (difficulty){
@@ -190,7 +191,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
             }
             System.out.println(file.getPath());
             FileWriter writer = new FileWriter(file,true);
-            writer.write(String.format(Locale.getDefault(),"%s %d %d\n",name, score, last_level));
+            writer.write(String.format(Locale.getDefault(),"%s %d %d %.2f\n",name, score, last_level, performance));
             writer.flush();
             writer.close();
         } catch (IOException e) {
@@ -241,7 +242,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                saveScore(input.getText().toString(), score, curr_level, difficulty);
+                                saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
                                 Intent intent = new Intent(Game.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();

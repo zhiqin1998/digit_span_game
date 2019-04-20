@@ -358,7 +358,7 @@
                         android:layout_marginRight="20dp"
                         android:text="@string/performance"
                         android:textAlignment="center"
-                        android:textSize="18sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/performance"

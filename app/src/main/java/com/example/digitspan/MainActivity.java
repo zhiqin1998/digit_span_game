@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 List<String> l = r.readLine(getFilesDir()+"/easy_score.txt");
                 for (String s: l){
                     String[] temp = s.split(" ");
-                    arrayList.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2])));
+                    arrayList.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Double.parseDouble(temp[3])));
                 }
 
                 Collections.sort(arrayList, new Comparator<Score>(){
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 if (arrayList.size()==0){
-                    arrayList.add(new Score("Not Available", -1, -1));
+                    arrayList.add(new Score("Not Available", -1, -1, -1.0));
                 }
                 CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), arrayList);
                 list.setAdapter(customAdapter);
@@ -95,17 +95,25 @@ public class MainActivity extends AppCompatActivity {
                 List<String> l2 = r.readLine(getFilesDir()+"/hard_score.txt");
                 for (String s: l2){
                     String[] temp = s.split(" ");
-                    arrayList2.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2])));
+                    arrayList2.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Double.parseDouble(temp[3])));
                 }
 
                 Collections.sort(arrayList2, new Comparator<Score>(){
                     public int compare(Score m1, Score m2) {
                         if (m1.score == m2.score) {
-                            if (m1.last_level>m2.last_level){
+                            if (m1.performance>m2.performance){
                                 return -1;
                             }
-                            else if(m1.last_level<m2.last_level){
+                            else if(m1.performance<m2.performance){
                                 return 1;
+                            }
+                            else{
+                                if (m1.last_level>m2.last_level){
+                                    return -1;
+                                }
+                                else if(m1.last_level<m2.last_level){
+                                    return 1;
+                                }
                             }
                             return 0;
                         } else if (m1.score > m2.score) {
@@ -116,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 if (arrayList2.size()==0){
-                    arrayList2.add(new Score("Not Available", -1, -1));
+                    arrayList2.add(new Score("Not Available", -1, -1, -1.0));
                 }
                 CustomAdapter customAdapter2 = new CustomAdapter(getApplicationContext(), arrayList2);
                 list2.setAdapter(customAdapter2);
