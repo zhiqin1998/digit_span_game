@@ -309,18 +309,19 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                         @Override
                         public void run() {
                             final TextView txtCount = findViewById(R.id.current_alphabet);
-                            new CountDownTimer((answer.length()) * 1000, 1000) // Wait 5 secs, tick every 1 sec
+                            new CountDownTimer((answer.length()) * 1400, 700) // Wait 5 secs, tick every 1 sec
                             {
                                 int index = 0;
                                 @Override
                                 public final void onTick(final long millisUntilFinished)
                                 {
-                                    txtCount.setText("");
-                                    SystemClock.sleep(500);
-                                    if (index<answer.length()) {
-                                        txtCount.setText(String.valueOf(answer.charAt(index)));
-                                        index++;
+                                    if (index/2<answer.length() && index%2==0) {
+                                        txtCount.setText(String.valueOf(answer.charAt(index/2)));
                                     }
+                                    else{
+                                        txtCount.setText("");
+                                    }
+                                    index++;
                                 }
                                 @Override
                                 public final void onFinish()
