@@ -3,12 +3,11 @@ package com.example.digitspan;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class Game extends AppCompatActivity implements View.OnClickListener{
+public class Game extends AppCompatActivity implements View.OnClickListener {
     StringBuilder curr_ans;
     int curr_level;
     int lives_left;
@@ -125,22 +124,23 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         difficulty = false;
-                        Toast.makeText(getApplicationContext(),"Easy Mode. Click 'Ready' to start.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Easy Mode. Click 'Ready' to start.", Toast.LENGTH_LONG).show();
                     }
                 });
         builder.setNegativeButton("Hard", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 difficulty = true;
-                Toast.makeText(getApplicationContext(),"Hard Mode. Click 'Ready' to start.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Hard Mode. Click 'Ready' to start.", Toast.LENGTH_LONG).show();
             }
         });
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    public void onBackPressed(){
-        if (state!=1) {
+
+    public void onBackPressed() {
+        if (state != 1) {
             if (rounds != 0) {
                 final EditText input = new EditText(this);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -178,48 +178,48 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         }
     }
 
-    public void updateView(){
+    public void updateView() {
         TextView lives = findViewById(R.id.live_count);
         lives.setText(String.format(Locale.getDefault(), "Lives Left: %d", lives_left));
         TextView level = findViewById(R.id.level_count);
-        level.setText(String.format(Locale.getDefault(),"Level %d",curr_level));
+        level.setText(String.format(Locale.getDefault(), "Level %d", curr_level));
         TextView curr_char = findViewById(R.id.current_alphabet);
         curr_char.setText(current_char);
         TextView curr_score = findViewById(R.id.score);
         curr_score.setText(String.valueOf(score));
         TextView perf = findViewById(R.id.performance);
-        if (rounds==0){
+        if (rounds == 0) {
             ave = 0.00;
+        } else {
+            ave = (double) score / (double) rounds;
         }
-        else{
-            ave = (double)score/(double)rounds;
-        }
-        perf.setText(String.format(Locale.getDefault(),"%.2f", ave));
+        perf.setText(String.format(Locale.getDefault(), "%.2f", ave));
     }
-    public void saveScore(String name, int score, int last_level, boolean difficulty, double performance){
+
+    public void saveScore(String name, int score, int last_level, boolean difficulty, double performance) {
         try {
             File file;
-            if (difficulty){
-                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/hard_score.txt");
-            }
-            else {
-                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/easy_score.txt");
+            if (difficulty) {
+                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/hard_score.txt");
+            } else {
+                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/easy_score.txt");
             }
             System.out.println(file.getPath());
-            FileWriter writer = new FileWriter(file,true);
-            writer.write(String.format(Locale.getDefault(),"%s~%d~%d~%.2f\n",name, score, last_level, performance));
+            FileWriter writer = new FileWriter(file, true);
+            writer.write(String.format(Locale.getDefault(), "%s~%d~%d~%.2f\n", name, score, last_level, performance));
             writer.flush();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(getApplicationContext(),"Your score had been saved.",Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Your score had been saved.", Toast.LENGTH_LONG).show();
     }
-    public void endRound(){
+
+    public void endRound() {
         state = 1;
         rounds++;
-        if (curr_ans.toString().equals(answer)){
-            score+=curr_level;
+        if (curr_ans.toString().equals(answer)) {
+            score += curr_level;
             curr_level++;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Correct Answer");
@@ -233,11 +233,10 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
             AlertDialog alert = builder.create();
             alert.show();
             correct.start();
-        }
-        else{
+        } else {
             lives_left--;
             updateView();
-            if(lives_left>0){
+            if (lives_left > 0) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Incorrect Answer");
                 builder.setMessage(String.format("The correct answer is %s.\nYou answered %s.", answer, curr_ans))
@@ -250,9 +249,8 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                 AlertDialog alert = builder.create();
                 alert.show();
                 wrong.start();
-                curr_level = Math.max(1, curr_level-1);
-            }
-            else{
+                curr_level = Math.max(1, curr_level - 1);
+            } else {
                 final EditText input = new EditText(this);
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Incorrect Answer");
@@ -283,20 +281,19 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         curr_ans = new StringBuilder();
         state = 0;
     }
-    public void startRound(){
-        if (state == 0){
+
+    public void startRound() {
+        if (state == 0) {
             state = 1;
 
-            if (difficulty){
+            if (difficulty) {
                 answer = generateString(curr_level, "");
-            }
-            else{
+            } else {
                 answer = dictionary.get(r.nextInt(dictionary.size()));
                 answer = answer.trim();
-                if (answer.length()>curr_level){
+                if (answer.length() > curr_level) {
                     answer = answer.substring(0, curr_level);
-                }
-                else if(answer.length()<curr_level){
+                } else if (answer.length() < curr_level) {
                     answer = generateString(curr_level, answer);
                 }
             }
@@ -312,20 +309,19 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                             new CountDownTimer((answer.length()) * 1400, 700) // Wait 5 secs, tick every 1 sec
                             {
                                 int index = 0;
+
                                 @Override
-                                public final void onTick(final long millisUntilFinished)
-                                {
-                                    if (index/2<answer.length() && index%2==0) {
-                                        txtCount.setText(String.valueOf(answer.charAt(index/2)));
-                                    }
-                                    else{
+                                public final void onTick(final long millisUntilFinished) {
+                                    if (index / 2 < answer.length() && index % 2 == 0) {
+                                        txtCount.setText(String.valueOf(answer.charAt(index / 2)));
+                                    } else {
                                         txtCount.setText("");
                                     }
                                     index++;
                                 }
+
                                 @Override
-                                public final void onFinish()
-                                {
+                                public final void onFinish() {
                                     state = 2;
                                     txtCount.setText("");
                                     beep.start();
@@ -339,14 +335,16 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
             t.start();
         }
     }
-    public String generateString(int length, String prefix){
+
+    public String generateString(int length, String prefix) {
         StringBuilder prefixBuilder = new StringBuilder(prefix);
-        while(prefixBuilder.length() < length){
+        while (prefixBuilder.length() < length) {
             prefixBuilder.append((char) (Math.random() * 26 + 97));
         }
         prefix = prefixBuilder.toString();
         return prefix;
     }
+
     public void onClick(View v) {
         switch (v.getId()) {
             default:

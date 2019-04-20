@@ -37,6 +37,7 @@ public class CustomReader {
 
         return mLines;
     }
+
     public List<String> readLineFromExternal(String path) {
         List<String> mLines = new ArrayList<>();
 
