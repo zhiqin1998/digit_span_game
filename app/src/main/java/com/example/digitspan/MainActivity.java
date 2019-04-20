@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
                 final ListView list = findViewById(R.id.easy_list);
                 ArrayList<Score> arrayList = new ArrayList<Score>();
                 CustomReader r = new CustomReader(getApplicationContext());
-                List<String> l = r.readLine(Environment.getExternalStorageDirectory().getAbsolutePath()+"/easy_score.txt");
+                List<String> l = r.readLineFromExternal(Environment.getExternalStorageDirectory().getAbsolutePath()+"/easy_score.txt");
                 for (String s: l){
-                    String[] temp = s.split(" ");
+                    String[] temp = s.split("~");
                     arrayList.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Double.parseDouble(temp[3])));
                 }
 
@@ -104,9 +104,9 @@ public class MainActivity extends AppCompatActivity {
 
                 final ListView list2 = findViewById(R.id.hard_list);
                 ArrayList<Score> arrayList2 = new ArrayList<Score>();
-                List<String> l2 = r.readLine(Environment.getExternalStorageDirectory().getAbsolutePath()+"/hard_score.txt");
+                List<String> l2 = r.readLineFromExternal(Environment.getExternalStorageDirectory().getAbsolutePath()+"/hard_score.txt");
                 for (String s: l2){
-                    String[] temp = s.split(" ");
+                    String[] temp = s.split("~");
                     arrayList2.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Double.parseDouble(temp[3])));
                 }
 

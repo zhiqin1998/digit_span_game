@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,10 +36,17 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
     List<String> dictionary;
     Random r = new Random();
     int state; // 0 is waiting ready button, 1 is busy, 2 is waiting answer,
+    MediaPlayer beep;
+    MediaPlayer correct;
+    MediaPlayer wrong;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        beep = MediaPlayer.create(this, R.raw.beep);
+        correct = MediaPlayer.create(this, R.raw.correct);
+        wrong = MediaPlayer.create(this, R.raw.wrong);
         curr_ans = new StringBuilder();
         curr_level = 3;
         lives_left = 3;
@@ -132,39 +140,41 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         dialog.show();
     }
     public void onBackPressed(){
-        if (rounds!=0) {
-            final EditText input = new EditText(this);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(true);
-            builder.setTitle("Are you sure?");
-            builder.setMessage("Do you want to quit the game?\nCurrent score will be stored. Enter your name below.");
-            builder.setPositiveButton("Yes",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
-                            Game.super.onBackPressed();
+        if (state!=1) {
+            if (rounds != 0) {
+                final EditText input = new EditText(this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(true);
+                builder.setTitle("Are you sure?");
+                builder.setMessage("Do you want to quit the game?\nCurrent score will be stored. Enter your name below.");
+                builder.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
+                                Game.super.onBackPressed();
 
-                        }
-                    });
-            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(getApplicationContext(), "Please continue the game.", Toast.LENGTH_LONG).show();
-                }
-            });
-            input.setText("Your name here.");
-            LinearLayout layout = new LinearLayout(this);
-            layout.setOrientation(LinearLayout.VERTICAL);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(50, 0, 50, 0);
-            layout.addView(input, params);
-            builder.setView(layout);
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }else {
-            super.onBackPressed();
+                            }
+                        });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "Please continue the game.", Toast.LENGTH_LONG).show();
+                    }
+                });
+                input.setText("Your name here.");
+                LinearLayout layout = new LinearLayout(this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(50, 0, 50, 0);
+                layout.addView(input, params);
+                builder.setView(layout);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -197,7 +207,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
             }
             System.out.println(file.getPath());
             FileWriter writer = new FileWriter(file,true);
-            writer.write(String.format(Locale.getDefault(),"%s %d %d %.2f\n",name, score, last_level, performance));
+            writer.write(String.format(Locale.getDefault(),"%s~%d~%d~%.2f\n",name, score, last_level, performance));
             writer.flush();
             writer.close();
         } catch (IOException e) {
@@ -222,6 +232,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                     });
             AlertDialog alert = builder.create();
             alert.show();
+            correct.start();
         }
         else{
             lives_left--;
@@ -238,6 +249,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
+                wrong.start();
                 curr_level = Math.max(1, curr_level-1);
             }
             else{
@@ -248,7 +260,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
+                                saveScore(input.getText().toString().trim(), score, curr_level, difficulty, ave);
                                 Intent intent = new Intent(Game.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -264,6 +276,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                 builder.setView(layout);
                 AlertDialog alert = builder.create();
                 alert.show();
+                wrong.start();
             }
         }
         updateView();
@@ -302,6 +315,8 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                                 @Override
                                 public final void onTick(final long millisUntilFinished)
                                 {
+                                    txtCount.setText("");
+                                    SystemClock.sleep(500);
                                     if (index<answer.length()) {
                                         txtCount.setText(String.valueOf(answer.charAt(index)));
                                         index++;
@@ -312,6 +327,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                                 {
                                     state = 2;
                                     txtCount.setText("");
+                                    beep.start();
                                     Toast.makeText(getApplicationContext(), "You may begin answering now.", Toast.LENGTH_SHORT).show();
                                 }
                             }.start();
