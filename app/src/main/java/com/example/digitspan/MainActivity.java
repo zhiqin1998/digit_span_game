@@ -1,8 +1,14 @@
 package com.example.digitspan;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +64,16 @@ public class MainActivity extends AppCompatActivity {
         hiscore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                    }
+                }
                 final ListView list = findViewById(R.id.easy_list);
                 ArrayList<Score> arrayList = new ArrayList<Score>();
                 CustomReader r = new CustomReader(getApplicationContext());
-                List<String> l = r.readLine(getFilesDir()+"/easy_score.txt");
+                List<String> l = r.readLine(Environment.getExternalStorageDirectory().getAbsolutePath()+"/easy_score.txt");
                 for (String s: l){
                     String[] temp = s.split(" ");
                     arrayList.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Double.parseDouble(temp[3])));
@@ -92,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                 final ListView list2 = findViewById(R.id.hard_list);
                 ArrayList<Score> arrayList2 = new ArrayList<Score>();
-                List<String> l2 = r.readLine(getFilesDir()+"/hard_score.txt");
+                List<String> l2 = r.readLine(Environment.getExternalStorageDirectory().getAbsolutePath()+"/hard_score.txt");
                 for (String s: l2){
                     String[] temp = s.split(" ");
                     arrayList2.add(new Score(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Double.parseDouble(temp[3])));
@@ -168,5 +180,4 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
 }

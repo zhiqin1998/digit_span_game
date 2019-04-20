@@ -2,7 +2,9 @@ package com.example.digitspan;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,7 +35,6 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
     List<String> dictionary;
     Random r = new Random();
     int state; // 0 is waiting ready button, 1 is busy, 2 is waiting answer,
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,35 +132,40 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         dialog.show();
     }
     public void onBackPressed(){
-        final EditText input = new EditText(this);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle("Are you sure?");
-        builder.setMessage("Do you want to quit the game?\nCurrent score will be stored. Enter your name below.");
-        builder.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
-                        Game.super.onBackPressed();
-                    }
-                });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(),"Please continue the game.",Toast.LENGTH_LONG).show();
-            }
-        });
-        input.setHint("Your name here.");
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(30, 0, 30, 0);
-        layout.addView(input, params);
-        builder.setView(layout);
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        if (rounds!=0) {
+            final EditText input = new EditText(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle("Are you sure?");
+            builder.setMessage("Do you want to quit the game?\nCurrent score will be stored. Enter your name below.");
+            builder.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            saveScore(input.getText().toString(), score, curr_level, difficulty, ave);
+                            Game.super.onBackPressed();
+
+                        }
+                    });
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getApplicationContext(), "Please continue the game.", Toast.LENGTH_LONG).show();
+                }
+            });
+            input.setText("Your name here.");
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(50, 0, 50, 0);
+            layout.addView(input, params);
+            builder.setView(layout);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }else {
+            super.onBackPressed();
+        }
     }
 
     public void updateView(){
@@ -184,10 +190,10 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
         try {
             File file;
             if (difficulty){
-                file = new File(getFilesDir()+"/hard_score.txt");
+                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/hard_score.txt");
             }
             else {
-                file = new File(getFilesDir()+"/easy_score.txt");
+                file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/easy_score.txt");
             }
             System.out.println(file.getPath());
             FileWriter writer = new FileWriter(file,true);
@@ -248,12 +254,12 @@ public class Game extends AppCompatActivity implements View.OnClickListener{
                                 finish();
                             }
                         });
-                input.setHint("Your name here.");
+                input.setText("Your name here.");
                 LinearLayout layout = new LinearLayout(this);
                 layout.setOrientation(LinearLayout.VERTICAL);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(30, 0, 30, 0);
+                params.setMargins(50, 0, 50, 0);
                 layout.addView(input, params);
                 builder.setView(layout);
                 AlertDialog alert = builder.create();
