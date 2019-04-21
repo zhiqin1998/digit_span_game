@@ -119,10 +119,9 @@
                 android:id="@+id/editText"
                 android:layout_width="355dp"
                 android:layout_height="wrap_content"
-                android:editable="false"
                 android:ems="10"
+                android:inputType="none"
                 android:gravity="start|top"
-                android:inputType="textMultiLine"
                 android:singleLine="false"
                 android:text="@string/instructions_text"
                 android:verticalScrollbarPosition="right" />
