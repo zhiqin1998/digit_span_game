@@ -32,36 +32,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Easy Mode"
-                    android:textAlignment="center"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <ListView
-                    android:id="@+id/hard_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_margin="10dp"
-                    android:divider="#000"
-                    android:dividerHeight="1dp"
-                    android:footerDividersEnabled="false"
-                    android:headerDividersEnabled="false" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
                     android:id="@+id/textView7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hard Mode"
+                    android:text="Easy Mode"
                     android:textAlignment="center"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -77,6 +51,34 @@
                     android:headerDividersEnabled="false">
 
                 </ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="715dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp">
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hard Mode"
+                    android:textAlignment="center"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ListView
+                    android:id="@+id/hard_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:divider="#000"
+                    android:dividerHeight="1dp"
+                    android:footerDividersEnabled="false"
+                    android:headerDividersEnabled="false" />
             </LinearLayout>
 
         </LinearLayout>
@@ -117,6 +119,7 @@
                 android:id="@+id/editText"
                 android:layout_width="355dp"
                 android:layout_height="wrap_content"
+                android:editable="false"
                 android:ems="10"
                 android:gravity="start|top"
                 android:inputType="textMultiLine"

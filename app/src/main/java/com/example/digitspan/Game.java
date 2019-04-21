@@ -47,7 +47,7 @@ public class Game extends AppCompatActivity implements View.OnClickListener {
         correct = MediaPlayer.create(this, R.raw.correct);
         wrong = MediaPlayer.create(this, R.raw.wrong);
         curr_ans = new StringBuilder();
-        curr_level = 3;
+        curr_level = 5;
         lives_left = 3;
         score = 0;
         state = 0;
